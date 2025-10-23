@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>قطاع الوسط</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&family=Rubik:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --brand:#1E88E5; --brand2:#42A5F5;
+    --text:#0d1b2a; --muted:#5c6b7a;
+    --card:#ffffff; --border:#e6ebf3;
+    --bg1:#ffffff; --bg2:#E3F2FD; --chip:#eef6ff;
+    --shadow:0 10px 24px rgba(30,136,229,.18);
+  }
+  :root[data-theme="dark"]{
+    --text:#e6edf5; --muted:#b9c4d0; --card:#111827; --border:#1f2937;
+    --bg1:#0D1B2A; --bg2:#1B263B; --chip:#0f2440;
+    --shadow:0 10px 28px rgba(17,24,39,.5);
+  }
+  *{box-sizing:border-box} html,body{height:100%}
+  body{margin:0;font-family:'Cairo',system-ui,Arial;background:linear-gradient(135deg,var(--bg1),var(--bg2));color:var(--text);transition:background .4s,color .4s;display:flex;flex-direction:column;}
+  [data-theme="dark"] body{font-family:'Rubik', system-ui, Arial}
+  .top-controls{position:fixed;right:16px;top:14px;display:flex;flex-direction:column;gap:10px;z-index:10}
+  .admin-link{background:linear-gradient(180deg,var(--card),var(--chip));border:1px solid var(--border);padding:8px 12px;border-radius:999px;text-decoration:none;color:var(--text);box-shadow:var(--shadow);font-weight:800;letter-spacing:.2px;white-space:nowrap}
+  .theme-toggle-wrap{display:flex;align-items:center;gap:8px;justify-content:flex-end}
+  .theme-toggle{border:none;border-radius:999px;cursor:pointer;width:42px;height:42px;background:linear-gradient(180deg,var(--card),var(--chip));box-shadow:var(--shadow);display:grid;place-items:center;transition:transform .25s}
+  .theme-toggle:hover{transform:scale(1.06)}
+  .theme-label{font-weight:700;color:var(--muted)}
+  header{display:flex;align-items:center;justify-content:center;gap:12px;padding:46px 16px 18px;}
+  .title{font-weight:800;font-size:32px;letter-spacing:.5px;animation:fadeDown .6s both;}
+  .wrap{width:100%;max-width:1100px;margin:0 auto;padding:8px 16px 36px;flex:1;display:flex;flex-direction:column;gap:18px}
+  .honor, .ann{display:none;justify-content:center;animation:fadeUp .6s .1s both}
+  .card{width:100%;max-width:860px;background:var(--card);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);padding:18px}
+  .honor .badge{background:linear-gradient(180deg,#FFD54F,#FFB300);color:#5f4400;font-weight:800;border-radius:999px;padding:6px 12px;box-shadow:0 10px 22px rgba(255,179,0,.35);margin:0 auto 8px;display:inline-block}
+  .honor .title2{text-align:center;font-size:20px;font-weight:800;margin:6px 0 2px}
+  .honor .center{text-align:center;color:var(--muted);font-size:14px;margin-bottom:6px}
+  .members{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding-top:6px}
+  .chip{background:linear-gradient(180deg,#f7fbff,var(--chip));color:var(--text);padding:8px 12px;border-radius:999px;border:1px solid var(--border)}
+  .ann h3{margin:0 0 8px 0}
+  .ann .item{padding:10px 12px;border:1px solid var(--border);border-radius:12px;margin-bottom:8px}
+  .ann .date{color:var(--muted);font-size:12px;margin-bottom:4px}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:6px;animation:fadeUp .6s .3s both}
+  @media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:520px){.grid{grid-template-columns:repeat(2,1fr)}}
+  .btn-tile{display:flex;flex-direction:column;align-items:center;gap:10px;text-decoration:none}
+  .circle{width:100px;height:100px;border-radius:999px;background:linear-gradient(135deg,var(--brand),var(--brand2));box-shadow:0 10px 26px rgba(30,136,229,.35);display:grid;place-items:center;transition:transform .2s, box-shadow .2s, filter .2s}
+  .btn-tile:hover .circle{transform:scale(1.06); box-shadow:0 16px 36px rgba(30,136,229,.55); filter:saturate(1.15)}
+  .svg-icon{width:40px;height:40px;display:block}
+  .label{font-weight:700;color:var(--text)}
+  @keyframes fadeDown{from{opacity:0; transform:translateY(-14px) scale(.98)} to{opacity:1; transform:translateY(0) scale(1)}}
+  @keyframes fadeUp{from{opacity:0; transform:translateY(14px)} to{opacity:1; transform:translateY(0)}}
+</style>
+</head>
+<body>
+<div class="top-controls">
+  <a class="admin-link" href="admin.html">دخول المشرف</a>
+  <div class="theme-toggle-wrap">
+    <button class="theme-toggle" id="themeBtn" title="تبديل النمط">🌙</button>
+    <div class="theme-label">تبديل النمط</div>
+  </div>
+</div>
+
+<header><div class="title">قطاع الوسط</div></header>
+
+<div class="wrap">
+  <section class="ann" id="annSec">
+    <div class="card">
+      <h3>الإعلانات</h3>
+      <div id="annList"></div>
+    </div>
+  </section>
+
+  <section class="honor" id="honorSec">
+    <div class="card">
+      <div class="badge">🏅 أفضل فرقة</div>
+      <div class="title2" id="honorTitle">لوحة الشرف –</div>
+      <div class="center" id="honorCenter"></div>
+      <div class="members" id="honorMembers"></div>
+    </div>
+  </section>
+
+  <section class="grid" aria-label="الخدمات">
+    <a class="btn-tile" href="https://example.com/table" target="_blank"><div class="circle"><svg class="svg-icon" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2" fill="white" opacity=".12"/><rect x="7" y="7" width="10" height="1.8" fill="white"/><rect x="7" y="11" width="10" height="1.8" fill="white"/><rect x="7" y="15" width="7" height="1.8" fill="white"/><circle cx="12" cy="5" r="2.2" fill="white"/></svg></div><div class="label">جدول القطاع</div></a>
+    <a class="btn-tile" href="https://example.com/vacation" target="_blank"><div class="circle"><svg class="svg-icon" viewBox="0 0 24 24"><path d="M12 3C8 3 5 6 5 10h14c0-4-3-7-7-7z" fill="white"/><path d="M5 10l7-7" stroke="white" stroke-width="2"/><rect x="11" y="10" width="2" height="10" fill="white"/><rect x="3" y="19" width="18" height="2" rx="1" fill="white" opacity=".9"/></svg></div><div class="label">حجز الإجازات</div></a>
+    <a class="btn-tile" href="https://example.com/check" target="_blank"><div class="circle"><svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="white" opacity=".12"/><path d="M7 12.5l3 3 7-7" stroke="white" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="label">التشييك اليومي</div></a>
+    <a class="btn-tile" href="https://example.com/swap" target="_blank"><div class="circle"><svg class="svg-icon" viewBox="0 0 24 24"><path d="M7 8h10" stroke="white" stroke-width="2" stroke-linecap="round"/><path d="M13 5l4 3-4 3" fill="white"/><path d="M17 16H7" stroke="white" stroke-width="2" stroke-linecap="round"/><path d="M11 19l-4-3 4-3" fill="white"/></svg></div><div class="label">تبديل المناوبات</div></a>
+    <a class="btn-tile" href="https://example.com/announcements" target="_blank"><div class="circle"><svg class="svg-icon" viewBox="0 0 24 24"><path d="M4 13V7l10-3v12L4 13z" fill="white"/><rect x="4" y="14" width="2" height="6" fill="white"/><circle cx="18" cy="9" r="2" fill="white" opacity=".8"/></svg></div><div class="label">الإعلانات</div></a>
+    <a class="btn-tile" href="https://example.com/suggestions" target="_blank"><div class="circle"><svg class="svg-icon" viewBox="0 0 24 24"><path d="M12 3a7 7 0 00-4 12c.6.6 1 1.4 1 2.2V18h6v-.8c0-.8.4-1.6 1-2.2A7 7 0 0012 3z" fill="white"/><rect x="9" y="18" width="6" height="2" rx="1" fill="white" opacity=".9"/></svg></div><div class="label">الاقتراحات</div></a>
+  </section>
+</div>
+
+<script>
+  const root = document.documentElement;
+  const saved = localStorage.getItem('sector_theme') || 'light';
+  if(saved==='dark'){ root.setAttribute('data-theme','dark'); document.getElementById('themeBtn').textContent='☀️'; }
+  document.getElementById('themeBtn').addEventListener('click',()=>{
+    const isDark = root.getAttribute('data-theme')==='dark';
+    root.setAttribute('data-theme', isDark? 'light':'dark');
+    localStorage.setItem('sector_theme', isDark? 'light':'dark');
+    document.getElementById('themeBtn').textContent = isDark ? '🌙' : '☀️';
+  });
+
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbww0b_xW1Fz2Yr4IIO6aaF_lln0IMgisWd5Hn0ODnWVrx85uSKpCdh_kbxRM84dkHPXIw/exec";
+
+  async function fetchJSON(url) {
+    try { const r = await fetch(url, {method:'GET'}); if(!r.ok) throw new Error('bad'); return await r.json(); }
+    catch(e) { return null; }
+  }
+
+  (async ()=>{
+    const ann = await fetchJSON(SCRIPT_URL + "?mode=read&type=announcements&limit=3");
+    if(ann && Array.isArray(ann.items) && ann.items.length) {
+      const list = document.getElementById('annList');
+      ann.items.slice(0,3).forEach(a=>{
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.innerHTML = `<div class="date">${a.date || ''}</div><div>${a.text || ''}</div>`;
+        list.appendChild(div);
+      });
+      document.getElementById('annSec').style.display='flex';
+    }
+    const hn = await fetchJSON(SCRIPT_URL + "?mode=read&type=honor");
+    if(hn && hn.team && hn.center && Array.isArray(hn.members) && hn.members.length) {
+      document.getElementById('honorTitle').textContent = "لوحة الشرف – " + hn.team;
+      document.getElementById('honorCenter').textContent = "المركز: " + hn.center;
+      const box = document.getElementById('honorMembers');
+      hn.members.forEach(m=>{ const s = document.createElement('span'); s.className='chip'; s.textContent=m; box.appendChild(s); });
+      document.getElementById('honorSec').style.display='flex';
+    }
+  })();
+</script>
+</body>
+</html>

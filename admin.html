@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>لوحة إدارة قطاع الوسط</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&family=Rubik:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --brand:#1E88E5; --brand2:#42A5F5;
+    --text:#0d1b2a; --muted:#5c6b7a;
+    --card:#ffffff; --border:#e6ebf3;
+    --bg1:#ffffff; --bg2:#E3F2FD;
+    --shadow:0 10px 24px rgba(30,136,229,.18);
+    --ok:#0a7d32; --err:#c62828; --info:#1e88e5;
+  }
+  :root[data-theme="dark"]{
+    --text:#e6edf5; --muted:#b9c4d0; --card:#111827; --border:#1f2937; --bg1:#0D1B2A; --bg2:#1B263B; --shadow:0 10px 28px rgba(17,24,39,.5);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:linear-gradient(135deg,var(--bg1),var(--bg2));color:var(--text);font-family:'Cairo',system-ui,Arial;transition:background .4s,color .4s}
+  [data-theme="dark"] body{font-family:'Rubik',system-ui,Arial}
+  header{display:flex;align-items:center;justify-content:center;gap:12px;padding:18px}
+  .title{font-weight:800;font-size:22px;letter-spacing:.3px;animation:fadeDown .5s both}
+  .tabs{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;animation:fadeUp .5s .2s both}
+  .tab-btn{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;border:none;border-radius:12px;padding:10px 16px;cursor:pointer;box-shadow:0 10px 24px rgba(30,136,229,.35)}
+  .tab-btn.active{transform:translateY(-2px)}
+  .panel{display:none;margin-top:14px;background:var(--card);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);padding:16px}
+  .panel.active{display:block}
+  label{font-weight:700;margin:8px 0 4px;display:block}
+  input[type=text], textarea{width:100%;padding:10px;border:1px solid var(--border);border-radius:10px;background:transparent;color:var(--text)}
+  textarea{min-height:120px;resize:vertical}
+  .btn{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;border:none;border-radius:12px;padding:10px 14px;cursor:pointer;box-shadow:0 10px 24px rgba(30,136,229,.35)}
+  .toast{position:fixed;right:16px;top:16px;display:none;padding:10px 14px;border-radius:12px;color:#fff;box-shadow:var(--shadow)}
+  .toast.ok{background:var(--ok)} .toast.err{background:var(--err)} .toast.info{background:var(--info)}
+  #gate{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center}
+  #gate .box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;width:320px;box-shadow:var(--shadow)}
+  .top-controls{position:fixed;right:16px;top:14px;display:flex;flex-direction:column;gap:10px;z-index:10}
+  .theme-toggle{border:none;border-radius:999px;cursor:pointer;width:42px;height:42px;background:linear-gradient(180deg,var(--card),#f0f7ff);box-shadow:var(--shadow);display:grid;place-items:center;transition:transform .25s}
+  .theme-toggle:hover{transform:scale(1.06)}
+  .theme-label{font-weight:700;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="top-controls">
+  <div style="display:flex;align-items:center;gap:8px;justify-content:flex-end">
+    <button class="theme-toggle" id="themeBtn" title="تبديل النمط">🌙</button>
+    <div class="theme-label">تبديل النمط</div>
+  </div>
+</div>
+
+<header><div class="title">لوحة إدارة قطاع الوسط</div></header>
+
+<div class="wrap" id="content" style="display:none">
+  <div class="tabs">
+    <button class="tab-btn active" onclick="openTab('ads', this)">الإعلانات</button>
+    <button class="tab-btn" onclick="openTab('honor', this)">لوحة الشرف</button>
+    <button class="tab-btn" onclick="openTab('links', this)">إدارة الروابط</button>
+  </div>
+
+  <section id="ads" class="panel active">
+    <label for="adText">نص الإعلان</label>
+    <textarea id="adText" placeholder="اكتب نص الإعلان هنا..."></textarea>
+    <div style="margin-top:10px"><button class="btn" onclick="addAnnouncement()">نشر الإعلان</button></div>
+    <p style="color:var(--muted);margin-top:8px">* سيتم عرضه في الواجهة خلال آخر ٣ إعلانات.</p>
+  </section>
+
+  <section id="honor" class="panel">
+    <label for="centerName">اسم المركز</label>
+    <input type="text" id="centerName" placeholder="مثال: مركز الوسط">
+    <label for="teamName">اسم الفرقة</label>
+    <input type="text" id="teamName" placeholder="مثال: فرقة الصقور">
+    <label for="members">أسماء الأعضاء (سطر لكل اسم)</label>
+    <textarea id="members" placeholder="محمد&#10;خالد&#10;عبدالعزيز"></textarea>
+    <div style="margin-top:10px"><button class="btn" onclick="updateHonor()">حفظ لوحة الشرف</button></div>
+  </section>
+
+  <section id="links" class="panel">
+    <label>📋 رابط جدول القطاع</label><input type="text" id="lnkTable" placeholder="https://...">
+    <label>🌴 رابط حجز الإجازات</label><input type="text" id="lnkVacation" placeholder="https://...">
+    <label>✅ رابط التشييك اليومي</label><input type="text" id="lnkCheck" placeholder="https://...">
+    <label>🔁 رابط تبديل المناوبات</label><input type="text" id="lnkSwap" placeholder="https://...">
+    <label>💡 رابط الاقتراحات</label><input type="text" id="lnkSuggest" placeholder="https://...">
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <button class="btn" onclick="saveLinks()">حفظ الروابط</button>
+    </div>
+  </section>
+</div>
+
+<div id="gate">
+  <div class="box">
+    <div style="font-weight:800;margin-bottom:8px">أدخل كلمة المرور</div>
+    <input type="password" id="pwd" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:10px">
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <button class="btn" onclick="login()">دخول</button>
+      <button class="btn" onclick="cancel()">إلغاء</button>
+    </div>
+    <div id="msg" style="color:#c62828;margin-top:8px;display:none">كلمة المرور غير صحيحة</div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const root = document.documentElement;
+  const saved = localStorage.getItem('sector_theme') || 'light';
+  if(saved==='dark'){ root.setAttribute('data-theme','dark'); document.getElementById('themeBtn').textContent='☀️'; }
+  document.getElementById('themeBtn').addEventListener('click',()=>{
+    const isDark = root.getAttribute('data-theme')==='dark';
+    root.setAttribute('data-theme', isDark? 'light':'dark');
+    localStorage.setItem('sector_theme', isDark? 'light':'dark');
+    document.getElementById('themeBtn').textContent = isDark ? '🌙' : '☀️';
+  });
+
+  function login(){
+    const v = document.getElementById('pwd').value;
+    if(v==='admin3838771'){ document.getElementById('gate').style.display='none'; document.getElementById('content').style.display='block'; }
+    else { document.getElementById('msg').style.display='block'; }
+  }
+  function cancel(){ document.getElementById('pwd').value=''; }
+
+  function openTab(id, btn){
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  const toast = (msg, cls='ok')=>{
+    const el = document.getElementById('toast');
+    el.textContent = msg; el.className = 'toast ' + cls; el.style.display='block';
+    setTimeout(()=> el.style.display='none', 2600);
+  };
+
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbww0b_xW1Fz2Yr4IIO6aaF_lln0IMgisWd5Hn0ODnWVrx85uSKpCdh_kbxRM84dkHPXIw/exec";
+  function confirmAnd(fn){ if(confirm('هل ترغب بالتأكيد على الحفظ؟')) fn(); }
+
+  async function postJSON(payload){
+    try {
+      const r = await fetch(SCRIPT_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+      const t = await r.text(); toast('✅ تم الحفظ بنجاح');
+    } catch(e) { toast('❌ خطأ أثناء الإرسال','err'); }
+  }
+
+  function addAnnouncement(){
+    const text = document.getElementById('adText').value.trim();
+    if(!text) return toast('⚠️ اكتب نص الإعلان أولاً','info');
+    confirmAnd(()=> postJSON({sheet:'إعلانات', text}));
+  }
+
+  function updateHonor(){
+    const center = document.getElementById('centerName').value.trim();
+    const team = document.getElementById('teamName').value.trim();
+    const members = document.getElementById('members').value.split('\n').map(s=>s.trim()).filter(Boolean);
+    if(!center || !team || !members.length) return toast('⚠️ أكمل جميع الحقول','info');
+    confirmAnd(()=> postJSON({sheet:'لوحة الشرف', center, team, members}));
+  }
+
+  function saveLinks(){
+    const table = document.getElementById('lnkTable').value.trim();
+    const vacation = document.getElementById('lnkVacation').value.trim();
+    const check = document.getElementById('lnkCheck').value.trim();
+    const swap = document.getElementById('lnkSwap').value.trim();
+    const suggestions = document.getElementById('lnkSuggest').value.trim();
+    confirmAnd(()=> postJSON({sheet:'روابط', table, vacation, check, swap, announcements:'', suggestions}));
+  }
+</script>
+</body>
+</html>
